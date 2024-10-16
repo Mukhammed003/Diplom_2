@@ -4,24 +4,23 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import original.Constants;
-import original.requestbodies.RequestBodyForCreatingUser;
-import original.requestbodies.RequestBodyForLoginUser;
+import original.requestbodies.RequestBodyForCreatingOrUpdatingUserData;
 import original.stepsfortests.CreatingUserSteps;
 
 import static org.apache.http.HttpStatus.*;
 
 public class CreatingUserTest {
 
-    private Boolean isNeedToDeleteUser;
+    private String accessToken;
 
     CreatingUserSteps creatingUserSteps = new CreatingUserSteps();
 
-    public Boolean getIsNeedToDeleteUser() {
-        return isNeedToDeleteUser;
+    public String getAccessToken() {
+        return accessToken;
     }
 
-    public void setIsNeedToDeleteUser(Boolean needToDeleteUser) {
-        isNeedToDeleteUser = needToDeleteUser;
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     @Before
@@ -31,10 +30,11 @@ public class CreatingUserTest {
 
     @Test
     public void rightCreatingUser() {
-        setIsNeedToDeleteUser(true);
-        RequestBodyForCreatingUser requestBodyForCreatingUser = new RequestBodyForCreatingUser("Mukhammed@yandex.ru", "password", "Mukhammed");
-        Response responseAfterCreatingUser = creatingUserSteps.createUser(requestBodyForCreatingUser);
+        RequestBodyForCreatingOrUpdatingUserData requestBodyForCreatingOrUpdatingUserData = new RequestBodyForCreatingOrUpdatingUserData("Mukhammed@yandex.ru", "password", "Mukhammed");
+        Response responseAfterCreatingUser = creatingUserSteps.createUser(requestBodyForCreatingOrUpdatingUserData);
         creatingUserSteps.verifyStatus(responseAfterCreatingUser, SC_OK);
+
+        setAccessToken(creatingUserSteps.extractingToken(responseAfterCreatingUser));
 
         String actualJson = creatingUserSteps.getFormattedResponseBody(responseAfterCreatingUser);
         String expectedJson = creatingUserSteps.generateExpectedJson(responseAfterCreatingUser);
@@ -43,11 +43,12 @@ public class CreatingUserTest {
 
     @Test
     public void tryToCreateTwoIdenticalUsers() {
-        setIsNeedToDeleteUser(true);
-        RequestBodyForCreatingUser requestBodyForCreatingUser = new RequestBodyForCreatingUser("Mukhammed@yandex.ru", "password", "Mukhammed");
-        creatingUserSteps.createUser(requestBodyForCreatingUser);
+        RequestBodyForCreatingOrUpdatingUserData requestBodyForCreatingOrUpdatingUserData = new RequestBodyForCreatingOrUpdatingUserData("Mukhammed@yandex.ru", "password", "Mukhammed");
+        Response firstResponseAfterCreatingUser = creatingUserSteps.createUser(requestBodyForCreatingOrUpdatingUserData);
 
-        Response secondResponseAfterCreatingUser = creatingUserSteps.createUser(requestBodyForCreatingUser);
+        setAccessToken(creatingUserSteps.extractingToken(firstResponseAfterCreatingUser));
+
+        Response secondResponseAfterCreatingUser = creatingUserSteps.createUser(requestBodyForCreatingOrUpdatingUserData);
         creatingUserSteps.verifyStatus(secondResponseAfterCreatingUser, SC_FORBIDDEN);
 
         String actualJson = creatingUserSteps.getFormattedErrorResponseBody(secondResponseAfterCreatingUser);
@@ -56,9 +57,8 @@ public class CreatingUserTest {
 
     @Test
     public void tryToCreateUserWithoutEmail() {
-        setIsNeedToDeleteUser(false);
-        RequestBodyForCreatingUser requestBodyForCreatingUser = new RequestBodyForCreatingUser(null, "password", "Mukhammed");
-        Response responseAfterCreatingUserWithBadRequest = creatingUserSteps.createUser(requestBodyForCreatingUser);
+        RequestBodyForCreatingOrUpdatingUserData requestBodyForCreatingOrUpdatingUserData = new RequestBodyForCreatingOrUpdatingUserData(null, "password", "Mukhammed");
+        Response responseAfterCreatingUserWithBadRequest = creatingUserSteps.createUser(requestBodyForCreatingOrUpdatingUserData);
 
         creatingUserSteps.verifyStatus(responseAfterCreatingUserWithBadRequest, SC_FORBIDDEN);
 
@@ -68,9 +68,8 @@ public class CreatingUserTest {
 
     @Test
     public void tryToCreateUserWithoutPassword() {
-        setIsNeedToDeleteUser(false);
-        RequestBodyForCreatingUser requestBodyForCreatingUser = new RequestBodyForCreatingUser("Mukhammed@yandex.ru", null, "Mukhammed");
-        Response responseAfterCreatingUserWithBadRequest = creatingUserSteps.createUser(requestBodyForCreatingUser);
+        RequestBodyForCreatingOrUpdatingUserData requestBodyForCreatingOrUpdatingUserData = new RequestBodyForCreatingOrUpdatingUserData("Mukhammed@yandex.ru", null, "Mukhammed");
+        Response responseAfterCreatingUserWithBadRequest = creatingUserSteps.createUser(requestBodyForCreatingOrUpdatingUserData);
 
         creatingUserSteps.verifyStatus(responseAfterCreatingUserWithBadRequest, SC_FORBIDDEN);
 
@@ -80,9 +79,8 @@ public class CreatingUserTest {
 
     @Test
     public void tryToCreateUserWithoutName() {
-        setIsNeedToDeleteUser(false);
-        RequestBodyForCreatingUser requestBodyForCreatingUser = new RequestBodyForCreatingUser("Mukhammed@yandex.ru", "password", null);
-        Response responseAfterCreatingUserWithBadRequest = creatingUserSteps.createUser(requestBodyForCreatingUser);
+        RequestBodyForCreatingOrUpdatingUserData requestBodyForCreatingOrUpdatingUserData = new RequestBodyForCreatingOrUpdatingUserData("Mukhammed@yandex.ru", "password", null);
+        Response responseAfterCreatingUserWithBadRequest = creatingUserSteps.createUser(requestBodyForCreatingOrUpdatingUserData);
 
         creatingUserSteps.verifyStatus(responseAfterCreatingUserWithBadRequest, SC_FORBIDDEN);
 
@@ -92,11 +90,7 @@ public class CreatingUserTest {
 
     @After
     public void setDown() {
-        if(getIsNeedToDeleteUser().equals(true)) {
-            RequestBodyForLoginUser requestBodyForLoginUser = new RequestBodyForLoginUser("Mukhammed@yandex.ru", "password");
-
-            Response responseAfterLoginUser = creatingUserSteps.loginUser(requestBodyForLoginUser);
-            String accessToken = creatingUserSteps.extractingToken(responseAfterLoginUser);
+        if(getAccessToken() != null) {
             creatingUserSteps.deleteUser(accessToken);
         }
         else {

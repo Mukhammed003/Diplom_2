@@ -5,10 +5,10 @@ import com.google.gson.GsonBuilder;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import original.Constants;
-import original.requestbodies.RequestBodyForCreatingUser;
+import original.requestbodies.RequestBodyForCreatingOrUpdatingUserData;
 import original.requestbodies.RequestBodyForLoginUser;
 import original.responsebodies.RightResponseBodyAfterCreatingUser;
-import original.responsebodies.RightResponseBodyAfterCreatingOrLoginUserWithBadRequest;
+import original.responsebodies.RightResponseBodyForBadRequest;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
@@ -16,11 +16,11 @@ import static org.junit.Assert.assertEquals;
 public class CreatingUserSteps {
 
     @Step("Создание пользователя")
-    public Response createUser(RequestBodyForCreatingUser requestBodyForCreatingUser) {
+    public Response createUser(RequestBodyForCreatingOrUpdatingUserData requestBodyForCreatingOrUpdatingUserData) {
         Response response =
                 given()
                         .header("Content-type", "application/json")
-                        .body(requestBodyForCreatingUser)
+                        .body(requestBodyForCreatingOrUpdatingUserData)
                         .when()
                         .post(Constants.ENDPOINT_FOR_CREATING_USER);
         return response;
@@ -43,11 +43,13 @@ public class CreatingUserSteps {
     public String generateExpectedJson(Response response) {
         String accessToken = response.then().extract().body().path("accessToken").toString();
         String refreshToken = response.then().extract().body().path("refreshToken").toString();
+        String email = response.then().extract().body().path("user.email").toString();
+        String name = response.then().extract().body().path("user.name").toString();
         return "{\n" +
                 "  \"success\": true,\n" +
                 "  \"user\": {\n" +
-                "    \"email\": \"mukhammed@yandex.ru\",\n" +
-                "    \"name\": \"Mukhammed\"\n" +
+                "    \"email\": \"" + email + "\",\n" +
+                "    \"name\": \"" + name + "\"\n" +
                 "  },\n" +
                 "  \"accessToken\": \"" + accessToken + "\",\n" +
                 "  \"refreshToken\": \"" + refreshToken + "\"\n" +
@@ -81,14 +83,14 @@ public class CreatingUserSteps {
         given()
                 .auth().oauth2(accessToken)
                 .when()
-                .delete(Constants.ENDPOINT_FOR_DELETING_USER);
+                .delete(Constants.ENDPOINT_FOR_DELETING_OR_UPDATING_USER_DATA);
     }
 
     @Step("Форматирование тела ответа в форматированный JSON (with bad request)")
     public String getFormattedErrorResponseBody(Response response) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        RightResponseBodyAfterCreatingOrLoginUserWithBadRequest errorResponse =
-                response.body().as(RightResponseBodyAfterCreatingOrLoginUserWithBadRequest.class);
+        RightResponseBodyForBadRequest errorResponse =
+                response.body().as(RightResponseBodyForBadRequest.class);
         return gson.toJson(errorResponse);
     }
 }

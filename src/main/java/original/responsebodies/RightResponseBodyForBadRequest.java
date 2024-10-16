@@ -1,6 +1,6 @@
 package original.responsebodies;
 
-public class RightResponseBodyAfterCreatingOrLoginUserWithBadRequest {
+public class RightResponseBodyForBadRequest {
 
     private Boolean success;
     private String message;

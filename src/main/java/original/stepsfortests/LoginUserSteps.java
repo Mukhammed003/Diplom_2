@@ -20,13 +20,15 @@ public class LoginUserSteps {
     public String generateExpectedJson(Response response) {
         String accessToken = response.then().extract().body().path("accessToken").toString();
         String refreshToken = response.then().extract().body().path("refreshToken").toString();
+        String email = response.then().extract().body().path("user.email").toString();
+        String name = response.then().extract().body().path("user.name").toString();
         return "{\n" +
                 "  \"success\": true,\n" +
                 "  \"accessToken\": \"" + accessToken + "\",\n" +
                 "  \"refreshToken\": \"" + refreshToken + "\",\n" +
                 "  \"user\": {\n" +
-                "    \"email\": \"mukhammed@yandex.ru\",\n" +
-                "    \"name\": \"Mukhammed\"\n" +
+                "    \"email\": \"" + email + "\",\n" +
+                "    \"name\": \"" + name + "\"\n" +
                 "  }\n" +
                 "}";
     }

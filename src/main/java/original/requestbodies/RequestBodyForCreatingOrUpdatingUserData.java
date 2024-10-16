@@ -1,12 +1,12 @@
 package original.requestbodies;
 
-public class RequestBodyForCreatingUser {
+public class RequestBodyForCreatingOrUpdatingUserData {
 
     private String email;
     private String password;
     private String name;
 
-    public RequestBodyForCreatingUser(String email, String password, String name) {
+    public RequestBodyForCreatingOrUpdatingUserData(String email, String password, String name) {
         this.email = email;
         this.password = password;
         this.name = name;

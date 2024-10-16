@@ -4,7 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import original.Constants;
-import original.requestbodies.RequestBodyForCreatingUser;
+import original.requestbodies.RequestBodyForCreatingOrUpdatingUserData;
 import original.requestbodies.RequestBodyForLoginUser;
 import original.stepsfortests.CreatingUserSteps;
 import original.stepsfortests.LoginUserSteps;
@@ -29,8 +29,9 @@ public class LoginUserTest {
     @Before
     public void setUp() {
         RestAssured.baseURI = Constants.BASIC_URL;
-        RequestBodyForCreatingUser requestBodyForCreatingUser = new RequestBodyForCreatingUser("Mukhammed@yandex.ru", "password", "Mukhammed");
-        creatingUserSteps.createUser(requestBodyForCreatingUser);
+        RequestBodyForCreatingOrUpdatingUserData requestBodyForCreatingOrUpdatingUserData = new RequestBodyForCreatingOrUpdatingUserData("Mukhammed@yandex.ru", "password", "Mukhammed");
+        Response responseAfterCreatingUser = creatingUserSteps.createUser(requestBodyForCreatingOrUpdatingUserData);
+        setAccessToken(creatingUserSteps.extractingToken(responseAfterCreatingUser));
     }
 
     @Test
@@ -73,11 +74,8 @@ public class LoginUserTest {
     public void setDown() {
         if(getAccessToken() != null) {
             creatingUserSteps.deleteUser(getAccessToken());
-        } else if (getAccessToken() == null) {
-            RequestBodyForLoginUser requestBodyForLoginUser = new RequestBodyForLoginUser("Mukhammed@yandex.ru", "password");
-            Response responseAfterLoginUser = creatingUserSteps.loginUser(requestBodyForLoginUser);
-
-            creatingUserSteps.deleteUser(creatingUserSteps.extractingToken(responseAfterLoginUser));
+        } else {
+            System.out.println("Error");
         }
     }
 }
