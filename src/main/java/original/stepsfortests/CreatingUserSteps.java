@@ -8,7 +8,7 @@ import original.Constants;
 import original.requestbodies.RequestBodyForCreatingUser;
 import original.requestbodies.RequestBodyForLoginUser;
 import original.responsebodies.RightResponseBodyAfterCreatingUser;
-import original.responsebodies.RightResponseBodyAfterCreatingUserWithBadRequest;
+import original.responsebodies.RightResponseBodyAfterCreatingOrLoginUserWithBadRequest;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
@@ -60,13 +60,18 @@ public class CreatingUserSteps {
     }
 
     @Step("Авторизуемся под пользователем")
-    public String loginUser(RequestBodyForLoginUser requestBodyForLoginUser) {
+    public Response loginUser(RequestBodyForLoginUser requestBodyForLoginUser) {
         Response response =
                 given()
                         .header("Content-type", "application/json")
                         .body(requestBodyForLoginUser)
                         .when()
                         .post(Constants.ENDPOINT_FOR_LOGIN_USER);
+        return response;
+    }
+
+    @Step("Извлечение accessToken из response")
+    public String extractingToken(Response response) {
         String accessToken = response.then().extract().body().path("accessToken").toString();
         return accessToken.substring(7);
     }
@@ -82,8 +87,8 @@ public class CreatingUserSteps {
     @Step("Форматирование тела ответа в форматированный JSON (with bad request)")
     public String getFormattedErrorResponseBody(Response response) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        RightResponseBodyAfterCreatingUserWithBadRequest errorResponse =
-                response.body().as(RightResponseBodyAfterCreatingUserWithBadRequest.class);
+        RightResponseBodyAfterCreatingOrLoginUserWithBadRequest errorResponse =
+                response.body().as(RightResponseBodyAfterCreatingOrLoginUserWithBadRequest.class);
         return gson.toJson(errorResponse);
     }
 }

@@ -95,7 +95,8 @@ public class CreatingUserTest {
         if(getIsNeedToDeleteUser().equals(true)) {
             RequestBodyForLoginUser requestBodyForLoginUser = new RequestBodyForLoginUser("Mukhammed@yandex.ru", "password");
 
-            String accessToken = creatingUserSteps.loginUser(requestBodyForLoginUser);
+            Response responseAfterLoginUser = creatingUserSteps.loginUser(requestBodyForLoginUser);
+            String accessToken = creatingUserSteps.extractingToken(responseAfterLoginUser);
             creatingUserSteps.deleteUser(accessToken);
         }
         else {

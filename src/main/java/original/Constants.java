@@ -15,4 +15,9 @@ public class Constants {
             "  \"success\": false,\n" +
             "  \"message\": \"Email, password and name are required fields\"\n" +
             "}";
+
+    public final static String EXAMPLE_OF_RIGHT_RESPONSE_BODY_AFTER_LOGIN_USER_WITH_BAD_REQUEST = "{\n" +
+            "  \"success\": false,\n" +
+            "  \"message\": \"email or password are incorrect\"\n" +
+            "}";
 }
