@@ -8,7 +8,7 @@ public class Constants {
     public final static String ENDPOINT_FOR_CREATING_USER = "/api/auth/register";
     public final static String ENDPOINT_FOR_LOGIN_USER = "/api/auth/login";
     public final static String ENDPOINT_FOR_DELETING_OR_UPDATING_USER_DATA = "/api/auth/user";
-    public final static String ENDPOINT_FOR_CREATING_ORDER = "/api/orders";
+    public final static String ENDPOINT_FOR_CREATING_ORDER_OR_RECEIVING_ORDERS_OF_SPECIFIC_USER = "/api/orders";
 
     public final static String EXAMPLE_OF_RIGHT_RESPONSE_BODY_AFTER_CREATING_IDENTICAL_USERS = "{\n" +
             "  \"success\": false,\n" +

@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 
 public class CreatingUserSteps {
 
-    @Step("Создание пользователя")
+    @Step("Создаем пользователя")
     public Response createUser(RequestBodyForCreatingOrUpdatingUserData requestBodyForCreatingOrUpdatingUserData) {
         Response response =
                 given()
@@ -26,12 +26,12 @@ public class CreatingUserSteps {
         return response;
     }
 
-    @Step("Проверка статуса ответа")
+    @Step("Проверяем статус ответа")
     public void verifyStatus(Response response, Integer expectedStatusCode) {
         response.then().statusCode(expectedStatusCode);
     }
 
-    @Step("Форматирование тела ответа в форматированный JSON")
+    @Step("Форматируем тело ответа в форматированный JSON")
     public String getFormattedResponseBody(Response response) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         RightResponseBodyAfterCreatingUser rightResponseBodyAfterCreatingUser =
@@ -39,7 +39,7 @@ public class CreatingUserSteps {
         return gson.toJson(rightResponseBodyAfterCreatingUser);
     }
 
-    @Step("Формируем ожидаемый JSON с токенами")
+    @Step("Формируем ожидаемый JSON")
     public String generateExpectedJson(Response response) {
         String accessToken = response.then().extract().body().path("accessToken").toString();
         String refreshToken = response.then().extract().body().path("refreshToken").toString();
@@ -72,13 +72,13 @@ public class CreatingUserSteps {
         return response;
     }
 
-    @Step("Извлечение accessToken из response")
+    @Step("Извлекаем accessToken из response")
     public String extractingToken(Response response) {
         String accessToken = response.then().extract().body().path("accessToken").toString();
         return accessToken.substring(7);
     }
 
-    @Step("Удаление пользователя по accessToken")
+    @Step("Удаляем пользователя по accessToken")
     public void deleteUser(String accessToken) {
         given()
                 .auth().oauth2(accessToken)
@@ -86,7 +86,7 @@ public class CreatingUserSteps {
                 .delete(Constants.ENDPOINT_FOR_DELETING_OR_UPDATING_USER_DATA);
     }
 
-    @Step("Форматирование тела ответа в форматированный JSON (with bad request)")
+    @Step("Форматируем тело ответа в форматированный JSON (with bad request)")
     public String getFormattedErrorResponseBody(Response response) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         RightResponseBodyForBadRequest errorResponse =

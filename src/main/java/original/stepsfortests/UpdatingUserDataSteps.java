@@ -24,7 +24,7 @@ public class UpdatingUserDataSteps {
         return response;
     }
 
-    @Step("Изменяем данные пользователя без авторизаци")
+    @Step("Изменяем данные пользователя без авторизаций")
     public Response updateUserDataWithoutAuthorization(RequestBodyForCreatingOrUpdatingUserData requestBodyForCreatingOrUpdatingUserData) {
         Response response =
                 given()
@@ -35,7 +35,7 @@ public class UpdatingUserDataSteps {
         return response;
     }
 
-    @Step("Форматирование тела ответа в форматированный JSON")
+    @Step("Форматируем тело ответа в форматированный JSON")
     public String getFormattedResponseBody(Response response) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         RightResponseBodyAfterUpdatingUserData rightResponseBodyAfterUpdatingUserData =

@@ -7,11 +7,10 @@ import original.requestbodies.RequestBodyForCreatingOrder;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.greaterThan;
 
 public class CreatingOrderSteps {
 
-    @Step("Создаем заказ с авторизацией пользователя")
+    @Step("Создаем заказ с авторизованным пользователем")
     public Response createOrderWithAuthorization(RequestBodyForCreatingOrder requestBodyForCreatingOrder, String accessToken) {
         Response response =
                 given()
@@ -19,7 +18,7 @@ public class CreatingOrderSteps {
                         .header("Content-type", "application/json")
                         .body(requestBodyForCreatingOrder)
                         .when()
-                        .post(Constants.ENDPOINT_FOR_CREATING_ORDER);
+                        .post(Constants.ENDPOINT_FOR_CREATING_ORDER_OR_RECEIVING_ORDERS_OF_SPECIFIC_USER);
         return response;
     }
 
@@ -30,11 +29,11 @@ public class CreatingOrderSteps {
                         .header("Content-type", "application/json")
                         .body(requestBodyForCreatingOrder)
                         .when()
-                        .post(Constants.ENDPOINT_FOR_CREATING_ORDER);
+                        .post(Constants.ENDPOINT_FOR_CREATING_ORDER_OR_RECEIVING_ORDERS_OF_SPECIFIC_USER);
         return response;
     }
 
-    @Step("Проверяем, что структура ответа правильная")
+    @Step("Проверяем, что структура ответа правильная и содержит нужны поля")
     public void checkStructureOfResponseForCreatingOrder(Response response) {
         response.then()
                 .assertThat()

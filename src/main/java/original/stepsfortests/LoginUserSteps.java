@@ -8,7 +8,7 @@ import original.responsebodies.RightResponseBodyAfterLoginUser;
 
 public class LoginUserSteps {
 
-    @Step("Форматирование тела ответа в форматированный JSON")
+    @Step("Форматируем тело ответа в форматированный JSON")
     public String getFormattedResponseBody(Response response) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         RightResponseBodyAfterLoginUser rightResponseBodyAfterLoginUser =
@@ -16,7 +16,7 @@ public class LoginUserSteps {
         return gson.toJson(rightResponseBodyAfterLoginUser);
     }
 
-    @Step("Формируем ожидаемый JSON с токенами")
+    @Step("Формируем ожидаемый JSON")
     public String generateExpectedJson(Response response) {
         String accessToken = response.then().extract().body().path("accessToken").toString();
         String refreshToken = response.then().extract().body().path("refreshToken").toString();
